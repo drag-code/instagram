@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { fetchUser } from "../redux/actions/index";
+import { fetchUser, fetchPosts } from "../redux/actions/index";
 import Theme from "../theme/Theme";
 import { Feed } from "../components/main/Feed";
-import { Profile } from "../components/main/Profile";
+import Profile from "../components/main/Profile";
 import { EmptyScreen } from "../components/EmptyScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -15,6 +15,7 @@ const Tab = createBottomTabNavigator();
 const MainScreen = (props) => {
 	useEffect(() => {
 		props.fetchUser();
+		props.fetchPosts();
 	}, []);
 
 	const { currentUser } = props;
@@ -63,6 +64,6 @@ const mapStateToProps = (store) => ({
 });
 
 const mapDispatchToProps = (dispatch) =>
-	bindActionCreators({ fetchUser }, dispatch);
+	bindActionCreators({ fetchUser, fetchPosts }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainScreen);
