@@ -46,3 +46,23 @@ export const fetchPosts = () => {
 			});
 	};
 };
+
+export const fetchFollowedUsers = () => {
+	return (dispatch) => {
+		firebase
+			.firestore()
+			.collection("following")
+			.doc(firebase.auth().currentUser.uid)
+			.collection("followedUsers")
+			.onSnapshot((snapshot) => {
+				let followedUsers = snapshot.docs.map((user) => {
+					const id = user.id;
+					return id;
+				});
+				dispatch({
+					type: USER_ACTIONS.USER_FOLLOWED_USERS_STATE_CHANGED,
+					followedUsers,
+				});
+			});
+	};
+};

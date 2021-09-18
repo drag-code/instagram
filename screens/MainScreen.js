@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { fetchUser, fetchPosts } from "../redux/actions/index";
+import { fetchUser, fetchPosts, fetchFollowedUsers } from "../redux/actions/index";
 import Theme from "../theme/Theme";
 import { Feed } from "../components/main/Feed";
 import Profile from "../components/main/Profile";
@@ -18,6 +18,7 @@ const MainScreen = (props) => {
 	useEffect(() => {
 		props.fetchUser();
 		props.fetchPosts();
+		props.fetchFollowedUsers();
 	}, []);
 
 	const { currentUser } = props;
@@ -81,6 +82,6 @@ const mapStateToProps = (store) => ({
 });
 
 const mapDispatchToProps = (dispatch) =>
-	bindActionCreators({ fetchUser, fetchPosts }, dispatch);
+	bindActionCreators({ fetchUser, fetchPosts, fetchFollowedUsers }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainScreen);

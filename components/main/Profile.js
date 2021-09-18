@@ -19,7 +19,13 @@ const Profile = (props) => {
 		} else {
 			fetchNotAuthUserData();
 		}
-	}, [props.route.params.uid]);
+
+		if (props.followedUsers.indexOf(props.route.params.uid) > -1) {
+			setFollowing(true)
+		} else {
+			setFollowing(false)
+		}
+	}, [props.route.params.uid, props.followedUsers]);
 
 	const followHandler = () => {
 		firebase
@@ -28,10 +34,7 @@ const Profile = (props) => {
 			.doc(firebase.auth().currentUser.uid)
 			.collection("followedUsers")
 			.doc(props.route.params.uid)
-			.set({})
-			.then( _ => {
-				setFollowing(true)
-			});
+			.set({});
 	};
 
 	const unfollowHandler = () => {
@@ -41,10 +44,7 @@ const Profile = (props) => {
 			.doc(firebase.auth().currentUser.uid)
 			.collection("followedUsers")
 			.doc(props.route.params.uid)
-			.delete()
-			.then( _ => {
-				setFollowing(false)
-			})
+			.delete();
 	};
 
 	const fetchNotAuthUserData = () => {
@@ -113,6 +113,7 @@ const Profile = (props) => {
 const styles = StyleSheet.create({
 	infoContainer: {
 		alignItems: "center",
+		marginBottom: 5
 	},
 	galleryContainer: {},
 	image: {
@@ -127,6 +128,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (store) => ({
 	currentUser: store.userState.currentUser,
 	posts: store.userState.posts,
+	followedUsers: store.userState.followedUsers
 });
 
 export default connect(mapStateToProps, null)(Profile);
