@@ -3,11 +3,13 @@ import { View, Text, Image, FlatList, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import firebase from "firebase";
 import Theme from "../../theme/Theme";
+import FollowButton from "../FollowButton";
 require("firebase/firestore");
 
 const Profile = (props) => {
 	const [userPosts, setUserPosts] = useState([]);
 	const [user, setUser] = useState(null);
+	const [following, setFollowing] = useState(false);
 
 	useEffect(() => {
 		const { currentUser, posts } = props;
@@ -19,6 +21,32 @@ const Profile = (props) => {
 		}
 	}, [props.route.params.uid]);
 
+	const followHandler = () => {
+		firebase
+			.firestore()
+			.collection("following")
+			.doc(firebase.auth().currentUser.uid)
+			.collection("followedUsers")
+			.doc(props.route.params.uid)
+			.set({})
+			.then( _ => {
+				setFollowing(true)
+			});
+	};
+
+	const unfollowHandler = () => {
+		firebase
+			.firestore()
+			.collection("following")
+			.doc(firebase.auth().currentUser.uid)
+			.collection("followedUsers")
+			.doc(props.route.params.uid)
+			.delete()
+			.then( _ => {
+				setFollowing(false)
+			})
+	};
+
 	const fetchNotAuthUserData = () => {
 		firebase
 			.firestore()
@@ -27,7 +55,7 @@ const Profile = (props) => {
 			.get()
 			.then((snapshot) => {
 				if (snapshot.exists) {
-					setUser(snapshot.data())
+					setUser(snapshot.data());
 				} else {
 					console.log("Not supported action");
 				}
@@ -49,7 +77,7 @@ const Profile = (props) => {
 						...data,
 					};
 				});
-				setUserPosts(posts)
+				setUserPosts(posts);
 			});
 	};
 
@@ -61,6 +89,11 @@ const Profile = (props) => {
 				<Text>{user.name}</Text>
 				<Text>{user.email}</Text>
 			</View>
+			{
+				props.route.params.uid !== firebase.auth().currentUser.uid ? 
+				(<FollowButton following={following} handlers={[followHandler, unfollowHandler]}/>) :
+				null
+			}
 			<View style={styles.galleryContainer}>
 				<FlatList
 					numColumns={3}
