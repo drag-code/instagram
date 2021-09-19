@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { fetchUser, fetchPosts, fetchFollowedUsers } from "../redux/actions/index";
 import Theme from "../theme/Theme";
-import { Feed } from "../components/main/Feed";
+import Feed from "../components/main/Feed";
 import Profile from "../components/main/Profile";
 import SearchScreen from "../components/main/Search";
 import { EmptyScreen } from "../components/EmptyScreen";

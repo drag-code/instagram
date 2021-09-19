@@ -1,29 +1,28 @@
 import { USER_ACTIONS } from "../constants/index";
 
 const initialState = {
-	currentUser: null,
-	posts: [],
-	followedUsers: []
+	users: [],
+	usersLoaded: 0,
 };
 
-export const user = (state = initialState, action) => {
+export const users = (state = initialState, action) => {
 	switch (action.type) {
-		case USER_ACTIONS.USER_STATE_CHANGED:
+		case USER_ACTIONS.USERS_DATA_STATE_CHANGED:
 			return {
 				...state,
-				currentUser: action.currentUser,
+				users: [...state.users, action.user],
 			};
 
-		case USER_ACTIONS.USER_POSTS_STATE_CHANGED:
+		case USER_ACTIONS.USERS_POSTS_STATE_CHANGED:
 			return {
 				...state,
-				posts: action.posts,
-			};
-
-		case USER_ACTIONS.USER_FOLLOWED_USERS_STATE_CHANGED:
-			return {
-				...state,
-				followedUsers: action.followedUsers,
+				usersLoaded: state.usersLoaded + 1,
+				users: state.users.map((user) => {
+					if(user.uid === action.uid) {
+						return { ...user, posts: action.posts };
+					} 
+					return user;
+				}),
 			};
 
 		default:

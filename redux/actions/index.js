@@ -63,6 +63,66 @@ export const fetchFollowedUsers = () => {
 					type: USER_ACTIONS.USER_FOLLOWED_USERS_STATE_CHANGED,
 					followedUsers,
 				});
+				for (let index = 0; index < followedUsers.length; index++) {
+					dispatch(fetchUsersData(followedUsers[index]));
+					
+				}
+			});
+	};
+};
+
+export const fetchUsersData = (uid) => {
+	return (dispatch, getState) => {
+		const found = getState().usersState.users.some((user) => user.uid === uid);
+		if (!found) {
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(uid)
+				.get()
+				.then((snapshot) => {
+					if (snapshot.exists) {
+						const user = snapshot.data();
+						user.uid = snapshot.id;
+						dispatch({
+							type: USER_ACTIONS.USERS_DATA_STATE_CHANGED,
+							user,
+						});
+						dispatch(fetchFollowedUsersPosts(user.uid));
+					} else {
+						console.log("Not supported action");
+					}
+				});
+		}
+	};
+};
+
+export const fetchFollowedUsersPosts = (uid) => {
+	return (dispatch, getState) => {
+		firebase
+			.firestore()
+			.collection("posts")
+			.doc(uid)
+			.collection("userPosts")
+			.orderBy("created_at", "asc")
+			.get()
+			.then((snapshot) => {
+				const uid = snapshot.docs[0].ref.path.split('/')[1];
+				const user = getState().usersState.users.find((user) => user.uid === uid);
+				let posts = snapshot.docs.map((post) => {
+					const data = post.data();
+					const id = post.id;
+					return {
+						id,
+						...data,
+						user
+					};
+				});
+				dispatch({
+					type: USER_ACTIONS.USERS_POSTS_STATE_CHANGED,
+					posts,
+					uid
+				});
 			});
 	};
 };
