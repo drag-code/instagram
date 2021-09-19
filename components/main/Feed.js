@@ -10,13 +10,11 @@ const Feed = (props) => {
 	useEffect(() => {
         let posts = [];
         if (props.usersLoaded === props.followedUsers.length) {
-			console.log("SU PUTA MADRE", props);
             for (let index = 0; index < props.followedUsers.length; index++) {
                 const user = props.users.find(user => user.uid === props.followedUsers[index]);
                 if (user !== undefined) 
 					posts = [...posts, ...user.posts];
             }
-			console.log("SU PUTA MADRE", posts);
             posts.sort((a, b) => a.created_at - b.created_at);
             setPosts(posts);
         }
