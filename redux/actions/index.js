@@ -133,3 +133,29 @@ export const fetchFollowedUsersPosts = (uid) => {
 			});
 	};
 };
+
+// export const fetchCommens = () => {
+// 	return (dispatch) => {
+// 		firebase
+// 			.firestore()
+// 			.collection("posts")
+// 			.doc(firebase.auth().currentUser.uid)
+// 			.collection("userPosts")
+// 			.orderBy("created_at", "asc")
+// 			.get()
+// 			.then((snapshot) => {
+// 				let posts = snapshot.docs.map((post) => {
+// 					const data = post.data();
+// 					const id = post.id;
+// 					return {
+// 						id,
+// 						...data,
+// 					};
+// 				});
+// 				dispatch({
+// 					type: USER_ACTIONS.USER_POSTS_STATE_CHANGED,
+// 					posts,
+// 				});
+// 			});
+// 	};
+// };

@@ -13,6 +13,7 @@ import Loader from "./components/Loader";
 import MainScreen from "./screens/MainScreen";
 import { AddPhoto } from "./components/main/AddPhoto";
 import { SaveScreen } from "./components/main/SaveScreen";
+import CommentsScreen from "./components/main/CommentsScreen";
 import initFirebase from "./config/firebase";
 
 const Stack = createNativeStackNavigator();
@@ -60,6 +61,7 @@ export default function App() {
 					/>
 					<Stack.Screen name="AddPhoto" component={AddPhoto} />
 					<Stack.Screen name="Save" component={SaveScreen} />
+					<Stack.Screen name="Comments" component={CommentsScreen} />
 				</Stack.Navigator>
 			</NavigationContainer>
 		</Provider>
