@@ -3,7 +3,7 @@ import { USER_ACTIONS } from "../constants/index";
 const initialState = {
 	currentUser: null,
 	posts: [],
-	followedUsers: []
+	followedUsers: [],
 };
 
 export const user = (state = initialState, action) => {
@@ -25,6 +25,9 @@ export const user = (state = initialState, action) => {
 				...state,
 				followedUsers: action.followedUsers,
 			};
+
+		case USER_ACTIONS.CLEAR_USER_DATA:
+			return initialState;
 
 		default:
 			return state;

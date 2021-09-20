@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, FlatList, StyleSheet } from "react-native";
+import { View, Text, Image, FlatList, StyleSheet, Button } from "react-native";
 import { connect } from "react-redux";
 import firebase from "firebase";
 import Theme from "../../theme/Theme";
@@ -81,6 +81,10 @@ const Profile = (props) => {
 			});
 	};
 
+	const logout = () => {
+		firebase.auth().signOut();
+	}
+
 	if (user === null) return <></>;
 
 	return (
@@ -92,7 +96,7 @@ const Profile = (props) => {
 			{
 				props.route.params.uid !== firebase.auth().currentUser.uid ? 
 				(<FollowButton following={following} handlers={[followHandler, unfollowHandler]}/>) :
-				null
+				<Button title="Logout" onPress={logout}/>
 			}
 			<View style={styles.galleryContainer}>
 				<FlatList

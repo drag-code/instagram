@@ -18,12 +18,15 @@ export const users = (state = initialState, action) => {
 				...state,
 				usersLoaded: state.usersLoaded + 1,
 				users: state.users.map((user) => {
-					if(user.uid === action.uid) {
+					if (user.uid === action.uid) {
 						return { ...user, posts: action.posts };
-					} 
+					}
 					return user;
 				}),
 			};
+
+		case USER_ACTIONS.CLEAR_USER_DATA:
+			return initialState;
 
 		default:
 			return state;

@@ -1,6 +1,13 @@
 import firebase from "firebase";
 import { USER_ACTIONS } from "../constants/index";
 
+
+export const clearData = () => {
+	return (dispatch) => {
+		dispatch({type: USER_ACTIONS.CLEAR_USER_DATA})
+	}
+}
+
 export const fetchUser = () => {
 	return (dispatch) => {
 		firebase
@@ -15,7 +22,7 @@ export const fetchUser = () => {
 						currentUser: snapshot.data(),
 					});
 				} else {
-					console.log("Not supported action");
+					console.log("FROM FETCH USER: Not supported action");
 				}
 			});
 	};
@@ -90,7 +97,7 @@ export const fetchUsersData = (uid) => {
 						});
 						dispatch(fetchFollowedUsersPosts(user.uid));
 					} else {
-						console.log("Not supported action");
+						console.log("FROM FETCH USERS DATA: Not supported action");
 					}
 				});
 		}
