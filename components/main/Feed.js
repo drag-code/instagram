@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Image, FlatList, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { connect } from "react-redux";
+import firebase from "firebase";
+require("firebase/firestore");
 import Theme from "../../theme/Theme";
 require("firebase/firestore");
 
@@ -11,17 +14,38 @@ const Feed = (props) => {
 
 	useEffect(() => {
 		let posts = [];
-		if (props.followedUsersLoaded === props.followedUsers.length) {
-			for (let index = 0; index < props.followedUsers.length; index++) {
-				const user = props.users.find(
-					(user) => user.uid === props.followedUsers[index]
-				);
-				if (user !== undefined) posts = [...posts, ...user.posts];
-			}
-			posts.sort((a, b) => a.created_at - b.created_at);
-			setPosts(posts);
+		if (
+			props.followedUsersLoaded === props.followedUsers.length &&
+			props.followedUsers.length !== 0
+		) {
+			props.feed.sort((a, b) => a.created_at - b.created_at);
+			setPosts(props.feed);
 		}
-	}, [props.followedUsersLoaded]);
+	}, [props.followedUsersLoaded, props.feed]);
+
+	const likePost = (userID, postID) => {
+		firebase
+			.firestore()
+			.collection("posts")
+			.doc(userID)
+			.collection("userPosts")
+			.doc(postID)
+			.collection("likes")
+			.doc(firebase.auth().currentUser.uid)
+			.set({});
+	};
+
+	const dislikePost = (userID, postID) => {
+		firebase
+			.firestore()
+			.collection("posts")
+			.doc(userID)
+			.collection("userPosts")
+			.doc(postID)
+			.collection("likes")
+			.doc(firebase.auth().currentUser.uid)
+			.delete();
+	};
 
 	return (
 		<View style={[Theme.container, Theme.bgWhite]}>
@@ -36,11 +60,21 @@ const Feed = (props) => {
 							<Image style={styles.image} source={{ uri: item.downloadUrl }} />
 							<Text
 								onPress={() =>
-									navigation.navigate("Comments", { postID: item.id, uid: item.user.uid })
+									navigation.navigate("Comments", {
+										postID: item.id,
+										uid: item.user.uid,
+									})
 								}
 								style={styles.displayComments}>
 								View comments...
 							</Text>
+							<View style={styles.postActionsSection}>
+								{
+									item.currentUserLike ?
+									(<MaterialCommunityIcons name="heart" size={26} onPress={() => dislikePost(item.user.uid, item.id)}/>) :
+									(<MaterialCommunityIcons name="heart-outline" size={26} onPress={() => likePost(item.user.uid, item.id)}/>) 
+								}
+							</View>
 						</View>
 					)}
 				/>
@@ -67,7 +101,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (store) => ({
 	currentUser: store.userState.currentUser,
 	followedUsers: store.userState.followedUsers,
-	users: store.usersState.users,
+	feed: store.usersState.feed,
 	followedUsersLoaded: store.usersState.followedUsersLoaded,
 });
 

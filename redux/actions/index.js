@@ -127,10 +127,38 @@ export const fetchFollowedUsersPosts = (uid) => {
 						user
 					};
 				});
+				for (let index = 0; index < posts.length; index++) {
+					dispatch(fetchFollowedUsersLikes(uid, posts[index].id));					
+				}
 				dispatch({
 					type: USER_ACTIONS.USERS_POSTS_STATE_CHANGED,
 					posts,
 					uid
+				});
+			});
+	};
+};
+
+export const fetchFollowedUsersLikes = (uid, postID) => {
+	return (dispatch, getState) => {
+		firebase
+			.firestore()
+			.collection("posts")
+			.doc(uid)
+			.collection("userPosts")
+			.doc(postID)
+			.collection("likes")
+			.doc(firebase.auth().currentUser.uid)
+			.onSnapshot((snapshot) => {
+				const postID = snapshot.ref.path.split('/')[3];
+				let currentUserLike = false;
+				if(snapshot.exists) {
+					currentUserLike = true;
+				}
+				dispatch({
+					type: USER_ACTIONS.USERS_LIKES_STATE_CHANGED,
+					postID,
+					currentUserLike
 				});
 			});
 	};

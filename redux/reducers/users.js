@@ -3,6 +3,7 @@ import { USER_ACTIONS } from "../constants/index";
 const initialState = {
 	users: [],
 	followedUsersLoaded: 0,
+	feed: [],
 };
 
 export const users = (state = initialState, action) => {
@@ -17,12 +18,17 @@ export const users = (state = initialState, action) => {
 			return {
 				...state,
 				followedUsersLoaded: state.followedUsersLoaded + 1,
-				users: state.users.map((user) => {
-					if (user.uid === action.uid) {
-						return { ...user, posts: action.posts };
-					}
-					return user;
-				}),
+				feed: [...state.feed, ...action.posts],
+			};
+
+		case USER_ACTIONS.USERS_LIKES_STATE_CHANGED:
+			return {
+				...state,
+				feed: state.feed.map((post) =>
+					post.id === action.postID
+						? { ...post, currentUserLike: action.currentUserLike }
+						: post
+				),
 			};
 
 		case USER_ACTIONS.CLEAR_USER_DATA:
