@@ -11,7 +11,7 @@ const Feed = (props) => {
 
 	useEffect(() => {
 		let posts = [];
-		if (props.usersLoaded === props.followedUsers.length) {
+		if (props.followedUsersLoaded === props.followedUsers.length) {
 			for (let index = 0; index < props.followedUsers.length; index++) {
 				const user = props.users.find(
 					(user) => user.uid === props.followedUsers[index]
@@ -21,7 +21,7 @@ const Feed = (props) => {
 			posts.sort((a, b) => a.created_at - b.created_at);
 			setPosts(posts);
 		}
-	}, [props.usersLoaded]);
+	}, [props.followedUsersLoaded]);
 
 	return (
 		<View style={[Theme.container, Theme.bgWhite]}>
@@ -68,7 +68,7 @@ const mapStateToProps = (store) => ({
 	currentUser: store.userState.currentUser,
 	followedUsers: store.userState.followedUsers,
 	users: store.usersState.users,
-	usersLoaded: store.usersState.usersLoaded,
+	followedUsersLoaded: store.usersState.followedUsersLoaded,
 });
 
 export default connect(mapStateToProps, null)(Feed);

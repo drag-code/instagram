@@ -2,7 +2,7 @@ import { USER_ACTIONS } from "../constants/index";
 
 const initialState = {
 	users: [],
-	usersLoaded: 0,
+	followedUsersLoaded: 0,
 };
 
 export const users = (state = initialState, action) => {
@@ -16,7 +16,7 @@ export const users = (state = initialState, action) => {
 		case USER_ACTIONS.USERS_POSTS_STATE_CHANGED:
 			return {
 				...state,
-				usersLoaded: state.usersLoaded + 1,
+				followedUsersLoaded: state.followedUsersLoaded + 1,
 				users: state.users.map((user) => {
 					if (user.uid === action.uid) {
 						return { ...user, posts: action.posts };

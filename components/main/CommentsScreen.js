@@ -9,40 +9,56 @@ import {
 } from "react-native";
 import Theme from "../../theme/Theme";
 import firebase from "firebase";
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import {fetchUsersData} from "../../redux/actions/index";
 require("firebase/firestore");
 
-const CommentsScreen = ({ route }) => {
+const CommentsScreen = (props) => {
 	const [comments, setComments] = useState([]);
 	const [postID, setPostID] = useState("");
 	const [text, setText] = useState("");
 
 	useEffect(() => {
-		if (route.params.postID !== postID) {
+		function matchUserToComment(com) {
+			for (let i = 0; i < com.length; i++) {
+				if (com[i].hasOwnProperty("user")) continue;
+				const user = props.users.find(user => user.uid === com[i].creator);
+				if (user == undefined) {
+					props.fetchUsersData(com[i].creator, false);
+				} else {
+					com[i].user = user;
+				}
+			}
+			setComments(com);
+		}
+		if (props.route.params.postID !== postID) {
 			firebase
 				.firestore()
 				.collection("posts")
-				.doc(route.params.uid)
+				.doc(props.route.params.uid)
 				.collection("userPosts")
-				.doc(route.params.postID)
+				.doc(props.route.params.postID)
 				.collection("comments")
-				.get()
-				.then((snapshot) => {
+				.onSnapshot((snapshot) => {
 					let comments = snapshot.docs.map((comment) => {
 						const data = comment.data();
 						const id = comment.id;
 						return { id, ...data };
 					});
-					setComments(comments);
+					matchUserToComment(comments);
 				});
-			setPostID(route.params.postID);
+			setPostID(props.route.params.postID);
+		} else {
+			matchUserToComment(comments);
 		}
-	}, [route.params.postID]);
+	}, [props.route.params.postID, props.users]);
 
 	const commentPost = () => {
 		firebase
 			.firestore()
 			.collection("posts")
-			.doc(route.params.uid)
+			.doc(props.route.params.uid)
 			.collection("userPosts")
 			.doc(postID)
 			.collection("comments")
@@ -61,6 +77,11 @@ const CommentsScreen = ({ route }) => {
 					data={comments}
 					renderItem={({ item }) => (
 						<View style={styles.imageContainer}>
+							{
+								item.user !== undefined ?
+								(<Text style={{fontWeight: "bold"}}>{item.user.name}</Text>) :
+								null
+							}
 							<Text style={Theme.container}>{item.text}</Text>
 						</View>
 					)}
@@ -103,4 +124,11 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default CommentsScreen;
+const mapStateToProps = (store) => ({
+	users: store.usersState.users,
+});
+
+const mapDispatchToProps = (dispatch) =>
+	bindActionCreators({ fetchUsersData }, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(CommentsScreen);

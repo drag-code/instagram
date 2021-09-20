@@ -71,15 +71,15 @@ export const fetchFollowedUsers = () => {
 					followedUsers,
 				});
 				for (let index = 0; index < followedUsers.length; index++) {
-					dispatch(fetchUsersData(followedUsers[index]));
+					dispatch(fetchUsersData(followedUsers[index], true));
 					
 				}
 			});
 	};
 };
 
-export const fetchUsersData = (uid) => {
-	return (dispatch, getState) => {
+export const fetchUsersData = (uid, shouldGetPosts) => {
+	return ((dispatch, getState) => {
 		const found = getState().usersState.users.some((user) => user.uid === uid);
 		if (!found) {
 			firebase
@@ -95,13 +95,15 @@ export const fetchUsersData = (uid) => {
 							type: USER_ACTIONS.USERS_DATA_STATE_CHANGED,
 							user,
 						});
-						dispatch(fetchFollowedUsersPosts(user.uid));
 					} else {
 						console.log("FROM FETCH USERS DATA: Not supported action");
 					}
-				});
+				})
+				if (shouldGetPosts) {
+					dispatch(fetchFollowedUsersPosts(uid));
+				}
 		}
-	};
+	});
 };
 
 export const fetchFollowedUsersPosts = (uid) => {
