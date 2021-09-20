@@ -53,6 +53,7 @@ export const SaveScreen = ({ route }) => {
 			.add({ 
 				downloadUrl,
 				caption,
+				likesCount: 0,
 				created_at: firebase.firestore.FieldValue.serverTimestamp()
 			}).then(() => {
 				navigation.popToTop();

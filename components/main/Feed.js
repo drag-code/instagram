@@ -56,7 +56,9 @@ const Feed = (props) => {
 					data={posts}
 					renderItem={({ item }) => (
 						<View style={styles.imageContainer}>
-							<Text style={Theme.container}>{item.user.name}</Text>
+							<Text style={(Theme.container, { fontWeight: "bold" })}>
+								{item.user.name}
+							</Text>
 							<Image style={styles.image} source={{ uri: item.downloadUrl }} />
 							<Text
 								onPress={() =>
@@ -69,11 +71,25 @@ const Feed = (props) => {
 								View comments...
 							</Text>
 							<View style={styles.postActionsSection}>
-								{
-									item.currentUserLike ?
-									(<MaterialCommunityIcons name="heart" size={26} onPress={() => dislikePost(item.user.uid, item.id)}/>) :
-									(<MaterialCommunityIcons name="heart-outline" size={26} onPress={() => likePost(item.user.uid, item.id)}/>) 
-								}
+								{item.currentUserLike ? (
+									<MaterialCommunityIcons
+										name="heart"
+										size={26}
+										onPress={() => dislikePost(item.user.uid, item.id)}
+									/>
+								) : (
+									<MaterialCommunityIcons
+										name="heart-outline"
+										size={26}
+										onPress={() => likePost(item.user.uid, item.id)}
+									/>
+								)}
+							</View>
+							<View style={styles.captionSection}>
+								<Text style={(Theme.container, { fontWeight: "bold", marginRight: 10 })}>
+									{item.user.name}
+								</Text>
+								<Text>{item.caption}</Text>
 							</View>
 						</View>
 					)}
@@ -95,6 +111,9 @@ const styles = StyleSheet.create({
 	},
 	displayComments: {
 		fontSize: 16,
+	},
+	captionSection: {
+		flexDirection: "row",
 	},
 });
 
